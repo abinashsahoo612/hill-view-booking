@@ -1,5 +1,4 @@
 "use client";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Footer from "../footer/footer";
 import HeaderOne from "../header/HeaderOne";
@@ -8,12 +7,18 @@ import Roomlist from "./room-list";
 import { PacmanLoader  } from "react-spinners";
 
 const SearchedRoomsPage = () => {
-  const searchParams = useSearchParams();
-  const checkIn = searchParams.get("checkIn");
-  const checkOut = searchParams.get("checkOut");
+  const [checkIn, setCheckIn] = useState(null);
+  const [checkOut, setCheckOut] = useState(null);
 
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // read query params on client-side to avoid useSearchParams SSR issues
+  useEffect(() => {
+    const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+    setCheckIn(params.get("checkIn"));
+    setCheckOut(params.get("checkOut"));
+  }, []);
 
   useEffect(() => {
     if (checkIn && checkOut) {
