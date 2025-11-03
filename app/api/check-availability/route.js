@@ -1,6 +1,6 @@
 import {connectDB} from "@/lib/mongodb";
-import Bookings from "../../models/Bookings";
-import Room from "../../models/Room";
+import Bookings from "@/models/Bookings";
+import Room from "@/models/Room";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
