@@ -2,54 +2,55 @@
 import Footer from "../footer/footer";
 import HeaderOne from "../header/HeaderOne";
 import BreadCrumb from "../breadcrumb/breadcrumb";
-import { useState } from "react";
-import { useSearchParams,useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
 import { PacmanLoader } from "react-spinners";
 
 export default function RegisterPage() {
     const { data: session } = useSession();
     
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/";
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Registration failed");
-      } else {
-        setLoading(false);
-        router.push("/login?redirect="+encodeURIComponent(redirect));
-      }
-    } catch (err) {
-      console.error(err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-
+  const [redirectTo, setRedirectTo] = useState("/");
+  useEffect(() => {
+    const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+    setRedirectTo(params.get("redirect") || "/");
+  }, []);
+   const [name, setName] = useState("");
+   const [password, setPassword] = useState("");
+   const [email, setEmail] = useState("");
+   const [phone, setPhone] = useState("");
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState("");
+ 
+   async function handleSubmit(e) {
+     e.preventDefault();
+     setLoading(true);
+     setError("");
+ 
+     try {
+       const res = await fetch("/api/user", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({ name, email, phone, password }),
+       });
+ 
+       const data = await res.json();
+ 
+       if (!res.ok) {
+         throw new Error(data.error || "Registration failed");
+       } else {
+         setLoading(false);
+         router.push("/login?redirect="+encodeURIComponent(redirectTo));
+       }
+     } catch (err) {
+       console.error(err);
+       setError(err.message);
+     } finally {
+       setLoading(false);
+     }
+   }
+ 
   return (
     <>
         <HeaderOne />
