@@ -1,13 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 export default function PaymentStatus() {
-  const params = useSearchParams();
   const [message, setMessage] = useState("Verifying payment...");
 
   useEffect(() => {
     const verifyPayment = async () => {
+      const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
       const txStatus = params.get("txStatus");
       const booking_id = params.get("booking_id");
 
@@ -27,7 +26,7 @@ export default function PaymentStatus() {
     };
 
     verifyPayment();
-  }, [params]);
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen text-center">
